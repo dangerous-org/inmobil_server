@@ -7,8 +7,9 @@ import {
 } from "../../domain/repositories/user.repository.js";
 import { hashPassword, comparePassword } from "../../utils/hashPassword.js";
 import { generateJwt, verifyToken } from "../../utils/jwt.js";
+import googleOauthVerify from "../../utils/googleOauthVerify.js";
 
-export const createUserService = async (userData, req, res) => {
+export const createUserService = async (userData, res) => {
   const { password } = userData;
 
   const userFoundByEmail = await findByEmailRepository(userData.email);
@@ -51,6 +52,33 @@ export const loginUserService = async (userEmail, userPassword, res) => {
   const token = generateJwt({ _id, userName, email, createdAt, updatedAt });
 
   res.cookie("authToken", token);
+  return { _id, userName, email, createdAt, updatedAt };
+};
+
+export const googleOauthService = async (token, res) => {
+  if (!token) throw new Error("token not found");
+  const payload = await googleOauthVerify(token);
+
+  const userFound = await findByEmailRepository(payload.email);
+
+  if (userFound.length > 0) {
+    const { _id, userName, email, createdAt, updatedAt } = userFound[0];
+    const token = generateJwt({ _id, userName, email, createdAt, updatedAt });
+    res.cookie("authToken", token);
+
+    return { _id, userName, email, createdAt, updatedAt };
+  }
+
+  const User = await createUserRepository({
+    userName: "user" + payload.sub,
+    password: "",
+    email: payload.email,
+  });
+
+  const { _id, userName, email, createdAt, updatedAt } = User;
+  const tokenn = generateJwt({ _id, userName, email, createdAt, updatedAt });
+
+  res.cookie("authToken", tokenn);
   return { _id, userName, email, createdAt, updatedAt };
 };
 
