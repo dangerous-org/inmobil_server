@@ -1,6 +1,6 @@
 import { uploadFiles } from '../../utils/uploads.js';
 import {createPostRepository,
-        getPostByTitleRepository,
+        getPostRepository,
         getPostByUser}
         from '../../domain/repositories/post.repository.js';
 
@@ -14,3 +14,8 @@ export const createPostService = async (postData,postPhotos) => {
     const Post = await createPostRepository (postData);
     return Post;
 } 
+
+export const getPostService = async (title) => {
+    const Post = await getPostRepository(title);
+    return Post;
+}
