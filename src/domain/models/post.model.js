@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
 
 const PostModel = new mongoose.Schema({
+
+    title : {
+        type : String,
+        required : [true, 'El titulo es obligatorio']
+    },
+
     description : {
         type : String,
         required : [true, 'La descripcion es obligatoria']
@@ -16,13 +22,18 @@ const PostModel = new mongoose.Schema({
         default : Date.now 
     },
 
-    ubicacion : {
+    location : {
         type : String,
         required : [true, 'La ubicacion es obligatoria']
     },
 
+    photos : {
+        type : [String],
+        required : true
+    },
+
     user : {
-        type : Schema.Types.ObjectId,
+        type : mongoose.Schema.Types.ObjectId,
         ref : 'User',
         required : true
     },

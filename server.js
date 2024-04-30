@@ -1,8 +1,10 @@
 import express from "express";
+import fileUpload from "express-fileupload";
 import MongoDB from "./src/infrastructure/database/MongoDB.js";
 import Routes from "./src/infrastructure/routes/index.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+
 class Server {
   constructor() {
     this.app = express();
@@ -22,6 +24,10 @@ class Server {
       })
     );
     this.app.use(cookieParser());
+    this.app.use(fileUpload({
+      useTempFiles : true,
+      tempFileDir : './uploads'
+    }));
   }
 
   async dataBase() {
