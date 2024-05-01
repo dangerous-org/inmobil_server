@@ -15,11 +15,13 @@ export const createUserService = async (userData, res) => {
   const userFoundByEmail = await findByEmailRepository(userData.email);
   const userFoundByUserName = await findByUserNameRepository(userData.userName);
 
+  if (userFoundByUserName.length > 0)
+    throw new Error(
+      `An user already exists with user name ${userData.userName}`
+    );
+
   if (userFoundByEmail.length > 0)
     throw new Error(`An user already exists with email ${userData.email}`);
-
-  if (userFoundByUserName.length > 0)
-    throw new Error(`An user already exists with user ${userData.userName}`);
 
   const hashedPassword = hashPassword(password);
 
@@ -41,7 +43,7 @@ export const createUserService = async (userData, res) => {
 export const loginUserService = async (userEmail, userPassword, res) => {
   const [userFound] = await findByEmailRepository(userEmail);
 
-  if (userFound == null || undefined) throw new Error("User doesn't exists");
+  if (!userFound) throw new Error("User doesn't exists");
 
   const { password } = userFound;
   const isMatch = compareSync(userPassword, password);
@@ -57,28 +59,25 @@ export const loginUserService = async (userEmail, userPassword, res) => {
 
 export const googleOauthService = async (token, res) => {
   if (!token) throw new Error("token not found");
-  const payload = await googleOauthVerify(token);
 
+  const payload = await googleOauthVerify(token);
   const userFound = await findByEmailRepository(payload.email);
 
+  let userData;
   if (userFound.length > 0) {
-    const { _id, userName, email, createdAt, updatedAt } = userFound[0];
-    const token = generateJwt({ _id, userName, email, createdAt, updatedAt });
-    res.cookie("authToken", token);
-
-    return { _id, userName, email, createdAt, updatedAt };
+    userData = userFound[0];
+  } else {
+    userData = await createUserRepository({
+      userName: "user" + payload.sub,
+      password: "",
+      email: payload.email,
+    });
   }
 
-  const User = await createUserRepository({
-    userName: "user" + payload.sub,
-    password: "",
-    email: payload.email,
-  });
+  const { _id, userName, email, createdAt, updatedAt } = userData;
+  const authToken = generateJwt({ _id, userName, email, createdAt, updatedAt });
 
-  const { _id, userName, email, createdAt, updatedAt } = User;
-  const tokenn = generateJwt({ _id, userName, email, createdAt, updatedAt });
-
-  res.cookie("authToken", tokenn);
+  res.cookie("authToken", authToken);
   return { _id, userName, email, createdAt, updatedAt };
 };
 
