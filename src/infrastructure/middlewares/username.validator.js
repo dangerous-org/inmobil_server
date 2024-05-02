@@ -1,7 +1,9 @@
 import { request, response } from "express";
 const userNameValidator = (req = request, res = response, next) => {
-  const { userName } = req.body;
-
+  let { userName } = req.body;
+  if(!userName){
+    userName = req.query;
+  }
   if (userName.length === 0)
     return res.status(401).json({ message: "enter a valid username" });
 

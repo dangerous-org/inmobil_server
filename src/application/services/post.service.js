@@ -1,8 +1,10 @@
 import { uploadFiles } from '../../utils/uploads.js';
 import {createPostRepository,
-        getPostRepository,
-        getPostByUser}
+        getPostByUserRepository,
+        getPostRepository}
         from '../../domain/repositories/post.repository.js';
+
+import {findByUserNameRepository} from '../../domain/repositories/user.repository.js'
 
 export const createPostService = async (postData,postPhotos) => {
     if(!postPhotos){
@@ -16,6 +18,19 @@ export const createPostService = async (postData,postPhotos) => {
 } 
 
 export const getPostService = async (termino, param) => {
-    const Post = await getPostRepository(termino, param);
-    return Post;
+    const Posts = await getPostRepository(termino, param);
+    return Posts;
+}
+
+export const getPostsByUserService = async (userName) => {
+    const [User] = await findByUserNameRepository(userName);
+    if(!User){
+        throw new Error('Este usuario es inexistente');
+    }
+    const Posts = await getPostByUserRepository(User);
+    return Posts;
+}
+
+export const updatePostService = async (postData, postId) => {
+    
 }

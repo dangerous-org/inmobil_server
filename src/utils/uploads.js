@@ -11,27 +11,30 @@ cloudinary.config({
 export const uploadFile = async (file) => {
     const route = path.join(process.cwd(),file);
     const { secure_url } = await cloudinary.uploader.upload(route);
+    fs.unlinkSync(route);
     return secure_url;
 }
 
-export const uploadFiles = async (files) => {
+export const uploadFiles = async (files = []) => {
+    if(!Array.isArray(files)){
+        const {tempFilePath} = files;
+        return await uploadFile(tempFilePath);
+    }
     const photos = [];
     for (const file of files) {
         const {tempFilePath} = file;
-        const route = path.join(process.cwd(),tempFilePath);
-        const {secure_url} = await cloudinary.uploader.upload(route);
+        const secure_url = await uploadFile(tempFilePath);
         photos.push(secure_url);
-        fs.unlinkSync(route);
     }
     return photos;
 }
 
-//https://res.cloudinary.com/db7o301hd/image/upload/v1709129123/rg84cr9ez4vsq1ilj05v.png
-export const updateFile = async (file,postId) => {
-    const [url] = await pool.query('select foto from productos where id = ?',[product_id]);
-    const nombreArr = url[0].foto.split('/');
-    const nombre = nombreArr[nombreArr.length-1];
-    const [public_id] = nombre.split('.');
-    cloudinary.uploader.destroy(public_id);
-    return uploadFile(file);
-}
+// //https://res.cloudinary.com/db7o301hd/image/upload/v1709129123/rg84cr9ez4vsq1ilj05v.png
+// export const updateFile = async (file,postId) => {
+//     const [url] = await pool.query('select foto from productos where id = ?',[product_id]);
+//     const nombreArr = url[0].foto.split('/');
+//     const nombre = nombreArr[nombreArr.length-1];
+//     const [public_id] = nombre.split('.');
+//     cloudinary.uploader.destroy(public_id);
+//     return uploadFile(file);
+// }
