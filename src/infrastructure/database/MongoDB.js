@@ -1,7 +1,7 @@
 import { connect } from "mongoose";
 
 const uri =
-  "mongodb+srv://inmobilinc:JpdFKfYc2jnMVA22@inmobil.hzxxzeq.mongodb.net/Inmobil?retryWrites=true&w=majority&appName=Inmobil";
+  process.env.MONGO_URI;
 
 const MongoDB = async () => {
   try {
