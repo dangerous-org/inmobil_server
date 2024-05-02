@@ -31,12 +31,22 @@ const PostModel = new mongoose.Schema({
         type : [String],
         required : true
     },
+    
+    status : {
+        type : String,
+        required : [true,"El estado es obligatorio"]
+    },
+
+    price :{
+        type : Number,
+        required : [true,"El precio es obligatorio"]
+    },
 
     user : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'User',
         required : true
-    },
+    }
 })
 
 const Post = mongoose.model('Post', PostModel);

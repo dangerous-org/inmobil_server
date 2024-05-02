@@ -12,8 +12,8 @@ export const CreatePost = async (req,res) => {
 
 export const getPost = async (req, res) => {
     try {
-        const {termino} = req.body;
-        const Post = await getPostService(termino);
+        const {termino,param} = req.body;
+        const Post = await getPostService(termino,param);
         return res.status(200).json(Post);
     } catch (error) {
         return res.status(500).json({ message: error.message});

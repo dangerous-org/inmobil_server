@@ -15,7 +15,7 @@ export const createPostService = async (postData,postPhotos) => {
     return Post;
 } 
 
-export const getPostService = async (title) => {
-    const Post = await getPostRepository(title);
+export const getPostService = async (termino, param) => {
+    const Post = await getPostRepository(termino, param);
     return Post;
 }
