@@ -29,6 +29,16 @@ export const uploadFiles = async (files = []) => {
     return photos;
 }
 
+export const updateFile = async(oldFiles, newFiles) => {
+    for(const file of oldFiles){
+        const nombreArr = file.split('/');
+        const nombre = nombreArr[nombreArr.length-1];
+        const [public_id] = nombre.split('.');
+        cloudinary.uploader.destroy(public_id);
+    }
+    return await uploadFiles(newFiles);
+}
+
 // //https://res.cloudinary.com/db7o301hd/image/upload/v1709129123/rg84cr9ez4vsq1ilj05v.png
 // export const updateFile = async (file,postId) => {
 //     const [url] = await pool.query('select foto from productos where id = ?',[product_id]);
