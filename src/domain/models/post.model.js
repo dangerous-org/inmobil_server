@@ -42,6 +42,10 @@ const PostModel = new mongoose.Schema({
         required : [true,"El precio es obligatorio"]
     },
 
+    dateBuilt :{
+        type : Date
+    },
+    
     user : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'User',
