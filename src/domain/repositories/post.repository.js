@@ -14,10 +14,14 @@ export const getPostRepository = async ( termino, param) => {
     return await Post.find(query);
 }
 
+export const getPostByIdRepository = async (id) => {
+    return await Post.findById(id);
+}
 
 export const getPostByUserRepository = async ( {_id} ) => {
     return await Post.find({user : _id}).populate('user');
 }
+
 
 export const createPostRepository = async ( postData ) => {
     return await Post.create(postData);
