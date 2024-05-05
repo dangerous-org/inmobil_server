@@ -6,7 +6,8 @@ const birthDateValidator = (req, res, next) => {
   if (date > currentYear)
     return res.status(400).json({ message: "enter a valid date" });
 
-  if (age < 18) return res.status(401).json({ message: "you must be of legal age" });
+  if (age < 18)
+    return res.status(401).json({ message: "you must be of legal age" });
   next();
 };
 

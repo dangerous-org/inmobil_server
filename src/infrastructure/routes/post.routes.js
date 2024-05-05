@@ -1,20 +1,28 @@
-import { Router } from 'express';
+import { Router } from "express";
+import {
+  CreatePost,
+  GetPostByParam,
+  GetPostById,
+  GetPostByUser,
+  UpdatePost,
+  GetPosts,
+} from "../../application/controllers/post.controller.js";
+import userNameValidator from "../middlewares/username.validator.js";
+import isValidId from "../middlewares/mongoId.validator.js";
+import postValidator from "../middlewares/post.validator.js";
 
-import {CreatePost, 
-        getPost, 
-        getPostById, 
-        getPostByUser, 
-        updatePost} from "../../application/controllers/post.controller.js"
-
-
-import userNameValidator from '../middlewares/username.validator.js';
-import isValidId from '../middlewares/mongoId.validator.js'
 const postRouter = Router();
 
-postRouter.post("/create",CreatePost);
-postRouter.get("/find",getPost);
-postRouter.get("/findbyid",isValidId,getPostById);
-postRouter.get("/findbyuser",userNameValidator,getPostByUser);
-postRouter.put("/update",isValidId,updatePost);
+postRouter.get("/getAll", GetPosts);
+
+postRouter.post("/create", postValidator, CreatePost);
+
+postRouter.get("/find", GetPostByParam);
+
+postRouter.get("/findbyid", isValidId, GetPostById);
+
+postRouter.get("/findbyuser", userNameValidator, GetPostByUser);
+
+postRouter.put("/update", isValidId, UpdatePost);
 
 export default postRouter;
