@@ -8,7 +8,7 @@ import cors from "cors";
 class Server {
   constructor() {
     this.app = express();
-    this.port =  4000;
+    this.port =  8056;
     this.middlewares();
     this.dataBase();
     this.routes();

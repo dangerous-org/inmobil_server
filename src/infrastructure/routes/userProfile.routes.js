@@ -1,9 +1,9 @@
 import { Router } from "express";
 import {
-  CreateUserInfo,
-  UpdateUserInfo,
-  GetUserInfo,
-} from "../../application/controllers/userInfo.controller.js";
+  CreateUserProfile,
+  UpdateUserProfile,
+  GetUserProfile,
+} from "../../application/controllers/userProfile.controller.js";
 import birthDateValidator from "../middlewares/birthDate.validator.js";
 import namesValidator from "../middlewares/names.validator.js";
 import dniValidator from "../middlewares/dni.validator.js";
@@ -15,7 +15,7 @@ userInfoRoutes.post(
   namesValidator,
   dniValidator,
   phoneValidator,
-  CreateUserInfo
+  CreateUserProfile
 );
 
 userInfoRoutes.put(
@@ -24,9 +24,9 @@ userInfoRoutes.put(
   dniValidator,
   phoneValidator,
   birthDateValidator,
-  UpdateUserInfo
+  UpdateUserProfile
 );
 
-userInfoRoutes.get("/getUserInfo/:userId", GetUserInfo);
+userInfoRoutes.get("/getUserInfo/:userName", GetUserProfile);
 
 export default userInfoRoutes;

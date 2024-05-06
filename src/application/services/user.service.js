@@ -3,8 +3,8 @@ import {
   createUserRepository,
   findByEmailRepository,
   findByUserNameRepository,
-  getUserRepository,
 } from "../../domain/repositories/user.repository.js";
+import { createUserProfileRepository } from "../../domain/repositories/userProfileRepository.js";
 import { hashPassword, comparePassword } from "../../utils/hashPassword.js";
 import { generateJwt, verifyToken } from "../../utils/jwt.js";
 import googleOauthVerify from "../../utils/googleOauthVerify.js";
@@ -30,6 +30,8 @@ export const createUserService = async (userData, res) => {
     email: userData.email,
     password: hashedPassword,
   });
+
+  const UserProfile = await createUserProfileRepository({ user: User._id });
 
   const { userName, email, _id, createdAt, updatedAt } = User;
   const token = generateJwt({
@@ -71,6 +73,12 @@ export const googleOauthService = async (token, res) => {
       userName: "user" + payload.sub,
       password: "",
       email: payload.email,
+    });
+    const UserProfile = await createUserProfileRepository({
+      names: payload.given_name,
+      lastName: payload.family_name,
+      picture: payload.picture,
+      user: userData._id,
     });
   }
 
