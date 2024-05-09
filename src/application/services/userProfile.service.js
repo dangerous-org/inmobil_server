@@ -4,6 +4,7 @@ import {
   getUserProfileRepository,
 } from "../../domain/repositories/userProfileRepository.js";
 import { findByUserNameRepository } from "../../domain/repositories/user.repository.js";
+import { getPostByUserRepository } from "../../domain/repositories/post.repository.js";
 
 export const createUserProfileService = async (info) => {
   const UserProfile = await createUserProfileRepository(info);
@@ -15,9 +16,10 @@ export const updateUserProfileService = async (userId, info) => {
   return UserProfile;
 };
 
-export const getUserProfileService =  async (userName) => {
+export const getUserProfileService = async (userName) => {
   const [User] = await findByUserNameRepository(userName);
   if (!User) throw new Error(`User ${userName} does not exists`);
   const UserProfile = await getUserProfileRepository(User._id);
-  return UserProfile;
+  const Posts = await getPostByUserRepository(User._id);
+  return { UserProfile, Posts };
 };
