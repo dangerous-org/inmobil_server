@@ -4,7 +4,10 @@ import {
   findByEmailRepository,
   findByUserNameRepository,
 } from "../../domain/repositories/user.repository.js";
-import { createUserProfileRepository } from "../../domain/repositories/userProfileRepository.js";
+import {
+  createUserProfileRepository,
+  getUserProfileRepository,
+} from "../../domain/repositories/userProfileRepository.js";
 import { hashPassword, comparePassword } from "../../utils/hashPassword.js";
 import { generateJwt, verifyToken } from "../../utils/jwt.js";
 import googleOauthVerify from "../../utils/googleOauthVerify.js";
@@ -32,14 +35,20 @@ export const createUserService = async (userData, res) => {
   });
 
   const UserProfile = await createUserProfileRepository({ user: User._id });
+  const { picture } = UserProfile;
 
   const { userName, email, _id, createdAt, updatedAt } = User;
   const token = generateJwt({
-    User: { userName, email, _id, createdAt, updatedAt },
+    userName,
+    email,
+    _id,
+    createdAt,
+    updatedAt,
+    picture,
   });
 
   res.cookie("authToken", token);
-  return { userName, email, _id, createdAt, updatedAt };
+  return { userName, email, _id, createdAt, updatedAt, picture };
 };
 
 export const loginUserService = async (userEmail, userPassword, res) => {
@@ -53,10 +62,18 @@ export const loginUserService = async (userEmail, userPassword, res) => {
   if (!isMatch) throw new Error("Incorrect password");
 
   const { _id, userName, email, createdAt, updatedAt } = userFound;
-  const token = generateJwt({ _id, userName, email, createdAt, updatedAt });
+  const { picture } = await getUserProfileRepository(_id);
+  const token = generateJwt({
+    _id,
+    userName,
+    email,
+    createdAt,
+    updatedAt,
+    picture,
+  });
 
   res.cookie("authToken", token);
-  return { _id, userName, email, createdAt, updatedAt };
+  return { _id, userName, email, createdAt, updatedAt, picture };
 };
 
 export const googleOauthService = async (token, res) => {
@@ -83,10 +100,18 @@ export const googleOauthService = async (token, res) => {
   }
 
   const { _id, userName, email, createdAt, updatedAt } = userData;
-  const authToken = generateJwt({ _id, userName, email, createdAt, updatedAt });
+  const { picture } = await getUserProfileRepository(_id);
+  const authToken = generateJwt({
+    _id,
+    userName,
+    email,
+    createdAt,
+    updatedAt,
+    picture,
+  });
 
   res.cookie("authToken", authToken);
-  return { _id, userName, email, createdAt, updatedAt };
+  return { _id, userName, email, createdAt, updatedAt, picture };
 };
 
 export const authenticateUserService = (token) => {
