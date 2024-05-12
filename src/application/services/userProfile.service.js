@@ -3,6 +3,7 @@ import {
   updateUserProfileRepository,
   getUserProfileRepository,
 } from "../../domain/repositories/userProfileRepository.js";
+import { updateFile } from "../../utils/uploads.js";
 import { findByUserNameRepository } from "../../domain/repositories/user.repository.js";
 import { getPostByUserRepository } from "../../domain/repositories/post.repository.js";
 
@@ -11,8 +12,28 @@ export const createUserProfileService = async (info) => {
   return UserProfile;
 };
 
-export const updateUserProfileService = async (userId, info) => {
-  const UserProfile = await updateUserProfileRepository(userId, info);
+export const updateUserProfileService = async (userId, info, picture) => {
+  const { names, lastName, dni, phoneNumber, location, biography, birthDate } =
+    info;
+
+  const oldUserProfile = await getUserProfileRepository(userId);
+
+  const newPicture = await updateFile(
+    oldUserProfile.picture,
+    picture.tempFilePath
+  );
+
+  const UserProfile = await updateUserProfileRepository(userId, {
+    names,
+    lastName,
+    dni,
+    phoneNumber,
+    location,
+    biography,
+    birthDate,
+    picture: newPicture,
+  });
+
   return UserProfile;
 };
 
