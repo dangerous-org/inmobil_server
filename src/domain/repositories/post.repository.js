@@ -1,7 +1,7 @@
 import Post from "../models/post.model.js";
 
 export const getPostsRepository = async () => {
-  return await Post.find({}).populate('user');
+  return await Post.find({}).populate("user");
 };
 
 export const getPostByParamRepository = async (termino, param) => {
@@ -34,5 +34,5 @@ export const createPostRepository = async (postData) => {
 };
 
 export const updatePostRepository = async (postData, postId) => {
-  return await Post.findByIdAndUpdate(postId, postData);
+  return await Post.findByIdAndUpdate(postId, postData, { new: true });
 };

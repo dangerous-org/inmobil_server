@@ -51,8 +51,7 @@ export const updatePostService = async (
   const { photos: oldPhotos } = await getPostByIdRepository(postId);
   const newPhotos = await updateFile(oldPhotos, postPhotos);
   postData.photos = newPhotos;
-  await updatePostRepository(postData, postId);
-  const UpdatePost = await getPostByIdRepository(postId);
+  const UpdatePost = await updatePostRepository(postData, postId); 
   return UpdatePost;
 };
 
