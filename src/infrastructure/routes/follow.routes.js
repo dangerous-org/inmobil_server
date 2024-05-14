@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { FollowUser } from "../../application/controllers/follow.controller.js";
+import { FollowUser, GetFollowers, UnfollowUser } from "../../application/controllers/follow.controller.js";
 const followRouter = Router();
 
-followRouter.post("/create", FollowUser);
-
+followRouter.post("/follow", FollowUser);
+followRouter.post("/unfollow", UnfollowUser);
+followRouter.get("/followers", GetFollowers);
 export default followRouter;
