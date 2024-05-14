@@ -1,7 +1,30 @@
 import Post from "../models/post.model.js";
 
 export const getPostsRepository = async () => {
-  return await Post.find({}).populate('user');
+  return await Post.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "userData",
+      },
+    },
+    {
+      $unwind: "$userData",
+    },
+    {
+      $lookup: {
+        from: "userprofiles",
+        localField: "userData._id",
+        foreignField: "user",
+        as: "userProfileData",
+      },
+    },
+    {
+      $unwind: "$userProfileData",
+    },
+  ]);
 };
 
 export const getPostByParamRepository = async (termino, param) => {
