@@ -37,10 +37,14 @@ export const updateUserProfileService = async (userId, info, picture) => {
   return UserProfile;
 };
 
+
 export const getUserProfileService = async (userName) => {
   const [User] = await findByUserNameRepository(userName);
+
   if (!User) throw new Error(`User ${userName} does not exists`);
+
   const UserProfile = await getUserProfileRepository(User._id);
   const Posts = await getPostByUserRepository(User._id);
+  
   return { UserProfile, Posts };
 };

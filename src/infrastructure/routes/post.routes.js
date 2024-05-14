@@ -23,6 +23,6 @@ postRouter.get("/findbyid", isValidId, GetPostById);
 
 postRouter.get("/findbyuser", userNameValidator, GetPostByUser);
 
-postRouter.put("/update", isValidId, UpdatePost);
+postRouter.put("/update", UpdatePost);
 
 export default postRouter;
