@@ -1,4 +1,5 @@
 import Post from "../models/post.model.js";
+import mongoose from 'mongoose'
 
 export const getPostsRepository = async () => {
   return await Post.aggregate([
@@ -45,7 +46,35 @@ export const getPostByParamRepository = async (termino, param) => {
 };
 
 export const getPostByIdRepository = async (id) => {
-  return await Post.findById(id);
+  return await Post.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(id)
+      }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "userData",
+      },
+    },
+    {
+      $unwind: "$userData",
+    },
+    {
+      $lookup: {
+        from: "userprofiles",
+        localField: "userData._id",
+        foreignField: "user",
+        as: "userProfileData",
+      },
+    },
+    {
+      $unwind: "$userProfileData",
+    },
+  ]);
 };
 
 export const getPostByUserRepository = async ({ _id }) => {
