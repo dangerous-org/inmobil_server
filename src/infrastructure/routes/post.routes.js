@@ -6,6 +6,7 @@ import {
   GetPostByUser,
   UpdatePost,
   GetPosts,
+  MarkPostAsSoldOrRented
 } from "../../application/controllers/post.controller.js";
 import userNameValidator from "../middlewares/username.validator.js";
 import isValidId from "../middlewares/mongoId.validator.js";
@@ -25,4 +26,9 @@ postRouter.get("/findbyuser", userNameValidator, GetPostByUser);
 
 postRouter.put("/update", UpdatePost);
 
+postRouter.post("/markPostAsSoldOrRented", MarkPostAsSoldOrRented);
+
 export default postRouter;
+
+
+

@@ -68,3 +68,13 @@ export const GetPosts = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+export const MarkPostAsSoldOrRented = async (req, res) => {
+  try {
+    const { id: postId, status } = req.body;
+    const updatedPost = await markPostAsSoldOrRentedService(postId, status);
+    return res.status(200).json(updatedPost);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};

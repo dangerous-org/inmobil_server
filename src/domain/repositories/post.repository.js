@@ -88,3 +88,7 @@ export const createPostRepository = async (postData) => {
 export const updatePostRepository = async (postData, postId) => {
   return await Post.findByIdAndUpdate(postId, postData);
 };
+
+export const updatePostStatusRepository = async (postId, postData) => {
+  return await Post.updateOne({ _id: postId }, { $set: { status: postData.status } });
+};

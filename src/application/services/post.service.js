@@ -6,6 +6,7 @@ import {
   getPostByIdRepository,
   updatePostRepository,
   getPostsRepository,
+  updatePostStatusRepository,
 } from "../../domain/repositories/post.repository.js";
 
 import { findByUserNameRepository } from "../../domain/repositories/user.repository.js";
@@ -59,4 +60,21 @@ export const updatePostService = async (
 export const getPostsService = async () => {
   const Posts = await getPostsRepository();
   return Posts;
+};
+
+export const markPostAsSoldOrRentedService = async (postId, status) => {
+  if (!["sold", "rented"].includes(status)) {
+    throw new Error("Invalid status. Status must be either 'sold' or 'rented'.");
+  }
+
+  const Post = await getPostByIdRepository(postId);
+  if (!Post) {
+    throw new Error("Post does not exist");
+  }
+
+  Post.status = status;
+  await updatePostStatusRepository(postId, Post);
+
+  const updatedPost = await getPostByIdRepository(postId);
+  return updatedPost;
 };
