@@ -5,7 +5,7 @@ const phoneValidator = (req, res, next) => {
   if (!regEx.test(phoneNumber))
     return res
       .status(400)
-      .json({ message: "phone number must have 10 digits" });
+      .json({ message: "Phone number must start with the country code" });
   next();
 };
 

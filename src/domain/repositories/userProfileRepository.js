@@ -5,7 +5,7 @@ export const createUserProfileRepository = async (info) => {
 };
 
 export const updateUserProfileRepository = async (userId, info) => {
-  return await UserProfile.findOneAndUpdate({ user: userId }, info);
+  return await UserProfile.findOneAndUpdate({ user: userId }, info).populate('user');
 };
 
 export const getUserProfileRepository = async (userId) => {
