@@ -1,5 +1,5 @@
 import Post from "../models/post.model.js";
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
 export const getPostsRepository = async () => {
   return await Post.aggregate([
@@ -29,28 +29,57 @@ export const getPostsRepository = async () => {
 };
 
 export const getPostByParamRepository = async (termino, param) => {
-  const regex = RegExp(termino, "i");
-  let query = {};
+  const regex = new RegExp(termino, "i");
+  let matchStage = {};
+
   if (!param) {
-    return await Post.find({
+    matchStage = {
       $or: [
         { title: regex },
         { description: regex },
         { location: regex },
         { typeOffer: regex },
       ],
-    }).populate("user");
+    };
+  } else {
+    matchStage[param] = regex;
   }
-  query[param] = regex;
-  return await Post.find(query);
+
+  return await Post.aggregate([
+    {
+      $match: matchStage,
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "userData",
+      },
+    },
+    {
+      $unwind: "$userData",
+    },
+    {
+      $lookup: {
+        from: "userprofiles",
+        localField: "userData._id",
+        foreignField: "user",
+        as: "userProfileData",
+      },
+    },
+    {
+      $unwind: "$userProfileData",
+    },
+  ]);
 };
 
 export const getPostByIdRepository = async (id) => {
   return await Post.aggregate([
     {
       $match: {
-        _id: new mongoose.Types.ObjectId(id)
-      }
+        _id: new mongoose.Types.ObjectId(id),
+      },
     },
     {
       $lookup: {
@@ -90,5 +119,8 @@ export const updatePostRepository = async (postData, postId) => {
 };
 
 export const updatePostStatusRepository = async (postId, postData) => {
-  return await Post.updateOne({ _id: postId }, { $set: { status: postData.status } });
+  return await Post.updateOne(
+    { _id: postId },
+    { $set: { status: postData.status } }
+  );
 };

@@ -11,10 +11,13 @@ import {
 
 import { findByUserNameRepository } from "../../domain/repositories/user.repository.js";
 
+
 export const getPostByParamService = async (termino, param) => {
   const Posts = await getPostByParamRepository(termino, param);
   return Posts;
 };
+
+
 
 export const getPostByIdService = async (id) => {
   const Post = await getPostByIdRepository(id);

@@ -7,6 +7,7 @@ import {
   getPostByIdService,
 } from "../services/post.service.js";
 
+
 export const GetPostByParam = async (req, res) => {
   try {
     const { termino, param } = req.query;
