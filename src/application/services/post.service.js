@@ -11,13 +11,10 @@ import {
 
 import { findByUserNameRepository } from "../../domain/repositories/user.repository.js";
 
-
 export const getPostByParamService = async (termino, param) => {
   const Posts = await getPostByParamRepository(termino, param);
   return Posts;
 };
-
-
 
 export const getPostByIdService = async (id) => {
   const Post = await getPostByIdRepository(id);
@@ -49,15 +46,16 @@ export const updatePostService = async (
   postId,
   { photos: postPhotos }
 ) => {
-  if (!postPhotos) {
-    throw new Error("you must upload at least a photo");
+  if (postPhotos) {
+    const { photos: oldPhotos } = await getPostByIdRepository(postId);
+    const newPhotos = await updateFile(oldPhotos, postPhotos);
+    postData.photos = newPhotos;
+    await updatePostRepository(postData, postId);
+    const UpdatePost = await getPostByIdRepository(postId);
+    return UpdatePost;
   }
-  const { photos: oldPhotos } = await getPostByIdRepository(postId);
-  const newPhotos = await updateFile(oldPhotos, postPhotos);
-  postData.photos = newPhotos;
   await updatePostRepository(postData, postId);
-  const UpdatePost = await getPostByIdRepository(postId);
-  return UpdatePost;
+  return getPostByIdRepository(postId);
 };
 
 export const getPostsService = async () => {
@@ -67,7 +65,9 @@ export const getPostsService = async () => {
 
 export const markPostAsSoldOrRentedService = async (postId, status) => {
   if (!["sold", "rented"].includes(status)) {
-    throw new Error("Invalid status. Status must be either 'sold' or 'rented'.");
+    throw new Error(
+      "Invalid status. Status must be either 'sold' or 'rented'."
+    );
   }
 
   const Post = await getPostByIdRepository(postId);

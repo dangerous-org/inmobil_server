@@ -53,8 +53,8 @@ export const UpdatePost = async (req, res) => {
   try {
     const { id: postId } = req.query;
     const { ...postData } = req.body;
-    const postPhotos = req.files;
-    const Post = await updatePostService(postData, postId, postPhotos);
+    let postPhotos = req.files;
+    const Post = await updatePostService(postData, postId, postPhotos = []);
     return res.status(200).json(Post);
   } catch (error) {
     return res.status(500).json({ message: error.message });
