@@ -46,6 +46,10 @@ const PostModel = new mongoose.Schema({
   typeEstate: {
     type: String,
   },
+  postStatus: {
+    type: Boolean,
+    default: true,
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
