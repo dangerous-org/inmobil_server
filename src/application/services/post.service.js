@@ -41,18 +41,19 @@ export const createPostService = async (postData, postPhotos) => {
   return Post;
 };
 
-export const updatePostService = async (
-  postData,
-  postId,
-  { photos: postPhotos }
-) => {
-  if (postPhotos) {
-    const { photos: oldPhotos } = await getPostByIdRepository(postId);
-    const newPhotos = await updateFile(oldPhotos, postPhotos);
+export const updatePostService = async (postData, postId, files) => {
+  let postPhotos = null;
+
+  if (files != null && files != undefined) {
+    postPhotos = files.photos;
+  }
+
+  if (postPhotos != null && postPhotos != undefined) {
+    const oldPost = await getPostByIdRepository(postId);
+    const newPhotos = await updateFile(oldPost[0].photos, postPhotos);
     postData.photos = newPhotos;
     await updatePostRepository(postData, postId);
-    const UpdatePost = await getPostByIdRepository(postId);
-    return UpdatePost;
+    return await getPostByIdRepository(postId);
   }
   await updatePostRepository(postData, postId);
   return getPostByIdRepository(postId);

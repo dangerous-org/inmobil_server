@@ -18,9 +18,8 @@ export const CreateUserProfile = async (req = request, res = response) => {
 export const UpdateUserProfile = async (req = request, res = response) => {
   try {
     const { userId } = req.params;
-    const {picture} = req.files;
     const info = req.body;
-    const UserProfile = await updateUserProfileService(userId, info, picture);
+    const UserProfile = await updateUserProfileService(userId, info, req.files);
     return res.status(200).json(UserProfile);
   } catch (error) {
     return res.status(500).json({ message: error.message });
